@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="text-center">AI Email Generator</h2>
+    <form id="emailForm">
+        <div class="mb-3">
+            <label class="form-label">Product Name</label>
+            <input type="text" name="product_name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Product Details</label>
+            <textarea name="product_details" class="form-control" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Offer Details</label>
+            <textarea name="offer_details" class="form-control" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Customer Segment</label>
+            <input type="text" name="customer_segment" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Company Name</label>
+            <input type="text" name="company_name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Company Details</label>
+            <textarea name="company_details" class="form-control" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email Tone</label>
+            <select name="tone" class="form-select" required>
+                <option value="formal">Formal</option>
+                <option value="informal">Informal</option>
+                <option value="friendly">Friendly</option>
+                <option value="persuasive">Persuasive</option>
+                <option value="urgent">Urgent</option>
+                <option value="casual">Casual</option>
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Additional Recipient Emails (comma-separated)</label>
+            <input type="text" id="recipientEmails" name="recipient_emails" class="form-control" placeholder="Enter extra emails, separated by commas">
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Schedule Date</label>
+            <input type="date" id="scheduleDate" name="schedule_date" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Schedule Time</label>
+            <input type="time" id="scheduleTime" name="schedule_time" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Generate Email</button>
+    </form>
+
+    <div class="mt-4">
+        <h4>Generated Email:</h4>
+        <textarea id="generatedEmail" class="form-control" rows="8" readonly></textarea>
+        <button id="sendEmail" class="btn btn-success mt-3" style="display:none;">Send Email</button>
+    </div>
+    
+</div>
+
+<script>
+    document.getElementById('emailForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        formData.append("schedule_date", document.getElementById("scheduleDate").value);
+        formData.append("schedule_time", document.getElementById("scheduleTime").value);
+        formData.append("recipient_emails", document.getElementById("recipientEmails").value); // Send extra emails
+
+        const response = await fetch('/generate', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        document.getElementById('generatedEmail').value = data.email;
+        document.getElementById('sendEmail').style.display = "block";
+    };
+
+    document.getElementById('sendEmail').onclick = async function() {
+        const emailContent = document.getElementById('generatedEmail').value;
+        const scheduleDate = document.getElementById("scheduleDate").value;
+        const scheduleTime = document.getElementById("scheduleTime").value;
+        const recipientEmails = document.getElementById("recipientEmails").value;
+
+        const response = await fetch('/send_email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: emailContent, schedule_date: scheduleDate, schedule_time: scheduleTime, recipient_emails: recipientEmails })
+        });
+
+        const data = await response.json();
+        alert(data.message);
+    };
+</script>
+
+</body>
+</html>
