@@ -8,7 +8,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
 
 # Set your API Key
-os.environ["TOGETHER_API_KEY"] = "a8b730604eb31a233a1cf0dc7d1b9b092880e32dbaa226686577d420a1a221d0"
+os.environ["TOGETHER_API_KEY"] = "******"
 
 app = Flask(__name__)
 scheduler = BackgroundScheduler()
@@ -90,8 +90,8 @@ def send_email():
     return jsonify({"message": "Email sent successfully!"})
 
 def send_scheduled_email(email_content, recipient_emails):
-    sender_email = "23kn1a42f6@gmail.com"
-    sender_password = "nxcn dxln rwou hdcw"
+    sender_email = "********@gmail.com"
+    sender_password = "**** **** **** ****"
 
     if isinstance(recipient_emails, str):  # Ensure recipient_emails is a list
         recipient_emails = [email.strip() for email in recipient_emails.split(",")]
